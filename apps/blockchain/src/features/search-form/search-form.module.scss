@@ -1,0 +1,32 @@
+/*
+ * Replace this with your own classes
+ *
+ * e.g.
+ * .container {
+ * }
+*/
+.hcontainer {
+  display: flex;
+  gap: 10px;
+}
+
+.vcontainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.inputField{
+  min-width: 600px;
+}
+
+
+
+
+.errorMessage{
+  color: var(--error-color);
+}
+
+.paddingTop1{
+  padding-top: 1rem
+}

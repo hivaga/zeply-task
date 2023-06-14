@@ -11,9 +11,16 @@
 #### Adding Material UI Library
 `npm install @mui/material @emotion/react @emotion/styled`
 
-
 #### Adding NestJS Setup
 Multiple dependencies installed manually
 
 #### Adding Kill Port
 `npm install -D kill-port`
+
+`package.json .... 
+  "scripts": {
+    "kill-port": "kill-port"`
+
+#### Adding React Forms Hook
+
+`npm install react-hook-form`
