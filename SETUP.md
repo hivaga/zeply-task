@@ -24,3 +24,10 @@ Multiple dependencies installed manually
 #### Adding React Forms Hook
 
 `npm install react-hook-form`
+
+#### Adding NestJS Swagger 
+
+`npm install --save @nestjs/swagger swagger-ui-express`
+
+#### Adding NestJS Axios
+`npm install --save @nestjs/axios`

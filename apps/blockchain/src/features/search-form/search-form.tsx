@@ -23,8 +23,21 @@ export function SearchForm(props: SearchHashProps) {
   } = useForm<ISearchForm>()
 
 
-  const onSubmitHandler: SubmitHandler<ISearchForm> = (data: ISearchForm) => {
+  const onSubmitHandler: SubmitHandler<ISearchForm> = async (data: ISearchForm) => {
     console.log('Submit clicked', data, errors);
+    const response = await fetch('http://localhost:3000/api/search-btc', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const responseData: any = await response.json();
+
+    console.log('data', responseData);
   }
 
   return (
@@ -34,16 +47,19 @@ export function SearchForm(props: SearchHashProps) {
           <div className={styles.vcontainer}>
             <div className={styles.hcontainer}>
               <OutlinedInput placeholder={"Enter address or transaction"}
+                             id={'hashInput'}
                              className={`${styles.inputField}`}  {...register("hash", {
                 required: true,
                 pattern: BTC_ADDRESS_REGEX
               })}/>
-              <Button variant='outlined' type='submit'>Search</Button>
+              <Button variant='outlined' type='submit' id={'submitButton'}>Search</Button>
             </div>
             <RadioGroup defaultValue={'address'} row={true} className={styles.hcontainer}>
               <FormControlLabel value="address" control={<Radio/>}
+                                id={'addressButton'}
                                 label="Address"  {...register("type", {required: true})}  />
               <FormControlLabel value="transaction" control={<Radio/>}
+                                id={'transactionButton'}
                                 label="Transaction"  {...register("type", {required: true})}/>
             </RadioGroup>
           </div>
