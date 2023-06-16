@@ -8,7 +8,9 @@ export class BlockchainApiService {
 
   getAddressBalance(address:string) {
     // https://www.blockchain.com/explorer/api/blockchain_api
-    const url = `https://blockchain.info/q/addressbalance/${address}?confirmations=confirmations`
+   // const url = `https://blockchain.info/q/addressbalance/${address}?confirmations=confirmations`
+    const url = `https://blockchain.info/rawaddr/${address}?`
+    //return throwError(() => new Error('unknown data'))
     return this.httpService.get(url).pipe(map(response => response.data));
   }
 

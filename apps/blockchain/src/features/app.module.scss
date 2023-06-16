@@ -2,3 +2,13 @@
 .header{
   color:  var(--primary-color);
 }
+
+.container{
+  display: flex;
+  justify-content: center;
+  background-color: rgba(211, 211, 211, 0.19);
+}
+
+.items{
+  flex-basis: 50%;
+}

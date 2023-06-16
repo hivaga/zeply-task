@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import styles from './app.module.scss';
 import {createTheme} from "@mui/material";
-import {SearchForm} from "./search-form/search-form";
+import {SearchForm} from "./search/search-form";
 
 const theme = createTheme();
 document.documentElement.style.setProperty('--primary-color', theme.palette.primary.main);
@@ -10,9 +10,11 @@ document.documentElement.style.setProperty('--error-color', theme.palette.error.
 
 export function App() {
   return (
-    <div>
-      <h1 className={styles.header}>Blockchain Application</h1>
-      <SearchForm />
+    <div className={styles.container}>
+      <div className={styles.items}>
+        <h1 className={styles.header}>Blockchain Application</h1>
+        <SearchForm />
+      </div>
     </div>
   );
 }
