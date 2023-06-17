@@ -1,22 +1,20 @@
-import styles from './search-form.module.scss';
-import {Button, FormControl, FormControlLabel, OutlinedInput, Radio, RadioGroup} from "@mui/material";
+import {Alert, Button, FormControl, FormControlLabel, OutlinedInput, Radio, RadioGroup, Snackbar} from "@mui/material";
+import React, {useContext, useEffect, useState} from "react";
 import {SubmitHandler, useForm} from "react-hook-form";
-import {addStyles} from "../../utils/styles-utils";
-import {IAddressDetails, ISearchForm, SearchStore} from "./store/search.store";
-import React, {useEffect, useState} from "react";
 import {catchError, of, Subject, takeUntil} from "rxjs";
-import ModalPreloader from "../../shared/components/modal-preloader/modal-preloader";
-import AddressBalanceDetails from "../../shared/components/address-balance-details/address-balance-details";
+import AddressBalanceDetails from "../../../../shared/components/address-balance-details/address-balance-details";
+import ModalPreloader from "../../../../shared/components/modal-preloader/modal-preloader";
+import {addStyles} from "../../../../utils/styles-utils";
+import {AppStoreContext} from "../../../main/components/main-page/main-page";
+import {IAddressDetails, ISearchForm} from "../../store/search.store";
+import styles from './search-page.module.scss';
 
 export interface SearchHashProps {
 }
 
 const BTC_ADDRESS_REGEX = /^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$/;
 
-const searchStore = new SearchStore();
-const SearchStoreContext = React.createContext<SearchStore>(searchStore);
-
-export function SearchForm(props: SearchHashProps) {
+export function SearchPage(props: SearchHashProps) {
 
 
   const {
@@ -28,10 +26,12 @@ export function SearchForm(props: SearchHashProps) {
 
   const onDestroyComponent = new Subject<void>();
 
+  const appStore = useContext(AppStoreContext);
+
   const [isLoading, setIsLoading] = useState(false);
+  const [hasErrorMessage, setHasErrorMessage] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
   const [loadedAddressDetails, setLoadedAddressDetails] = useState<IAddressDetails | undefined>(undefined)
-
-
   useEffect(() => {
 
     console.log('Component SearchForm is update!');
@@ -39,15 +39,17 @@ export function SearchForm(props: SearchHashProps) {
     return () => {
       onDestroyComponent.next();
     }
-  }, []); // Empty dependenc
+  }, []);
 
 
   const onSubmitHandler: SubmitHandler<ISearchForm> = async (data: ISearchForm) => {
     console.log('Submit clicked', data, errors);
     setIsLoading(true);
     if (data.type === 'address') {
-      searchStore.addressBalance(data).pipe(catchError((errors: any) => {
+      appStore.addressBalance(data).pipe(catchError((errors: any) => {
         console.error('Error fetching btc address details!', data, errors);
+        setErrorMessage(errors?.message ?? 'Error while loading address');
+        setHasErrorMessage(true);
         return of(undefined);
       }), takeUntil(onDestroyComponent)).subscribe(response => {
         if (response) {
@@ -59,9 +61,13 @@ export function SearchForm(props: SearchHashProps) {
     }
   }
 
+  const onCloseErrorMessageHandler = () => {
+    setHasErrorMessage(false);
+  }
+
   return (
-    <SearchStoreContext.Provider value={searchStore}>
-      <div>
+    <div>
+      <div className={styles.container}>
         <form onSubmit={handleSubmit(onSubmitHandler)}>
           <FormControl>
             <div className={styles.vcontainer}>
@@ -85,6 +91,7 @@ export function SearchForm(props: SearchHashProps) {
             </div>
           </FormControl>
         </form>
+
         <div className={addStyles(styles.vcontainer, styles.errorMessage, styles.paddingTop1)}>
           {errors.hash && <div>
             {errors.hash.type === 'required' && <span>Address or transaction hash are required</span>}
@@ -92,12 +99,23 @@ export function SearchForm(props: SearchHashProps) {
           </div>}
           <div>{errors.type && <span>This field is required</span>}</div>
         </div>
-        {loadedAddressDetails && <AddressBalanceDetails details={loadedAddressDetails}/>}
+        {loadedAddressDetails &&
+          <div className={styles.vcontainer}>
+            <AddressBalanceDetails details={loadedAddressDetails}/>
+            <div className={styles.hcontainer}>
+              <Button variant='outlined' id={'notifyMeButton'}>Notify Me</Button>
+              <Button variant='outlined' id={'moreDetailsButton'}>More Details</Button>
+            </div>
+          </div>}
       </div>
       {isLoading && <ModalPreloader/>}
-
-    </SearchStoreContext.Provider>
+      <Snackbar anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
+                open={hasErrorMessage}
+                onClose={onCloseErrorMessageHandler}>
+        <Alert severity="error">{errorMessage}</Alert>
+      </Snackbar>
+    </div>
   );
 }
 
-export default SearchForm;
+export default SearchPage;

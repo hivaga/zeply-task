@@ -8,8 +8,8 @@ export interface ModalPreloaderProps {
 
 function ModalPreloader(props: ModalPreloaderProps) {
   return (<div className={styles.container}>
-        <CircularProgress size={'220px'}/>
-      </div>);
+    <CircularProgress size={'220px'}/>
+  </div>);
 }
 
 export default ModalPreloader;

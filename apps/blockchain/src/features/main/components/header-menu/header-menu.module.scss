@@ -1,0 +1,38 @@
+/*
+ * Replace this with your own classes
+ *
+ * e.g.
+ * .container {
+ * }
+*/
+.header{
+  color:  white;
+}
+
+
+.container{
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  width: 100%;
+}
+
+
+.spacer50px{
+  width: 50px;
+}
+
+.badgeContainer{
+  position: relative;
+  display: block;
+}
+
+.badge {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.flexGrow1{
+  flex-grow: 1;
+}

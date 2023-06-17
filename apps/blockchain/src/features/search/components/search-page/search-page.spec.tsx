@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react';
 
-import {SearchForm} from './search-form';
+import {SearchPage} from './search-page';
 
 describe('SearchForm', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<SearchForm />);
+    const { baseElement } = render(<SearchPage />);
     expect(baseElement).toBeTruthy();
   });
 });

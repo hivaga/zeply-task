@@ -1,15 +1,15 @@
-import { render } from '@testing-library/react';
+import {render} from '@testing-library/react';
 
-import App from './app';
+import {MainPage} from './main-page';
 
 describe('App', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<App />);
+    const { baseElement } = render(<MainPage />);
     expect(baseElement).toBeTruthy();
   });
 
   it('should have a correct header string', () => {
-    const { getByText } = render(<App />);
+    const { getByText } = render(<MainPage />);
     expect(getByText(/Blockchain/gi)).toBeTruthy();
   });
 });
