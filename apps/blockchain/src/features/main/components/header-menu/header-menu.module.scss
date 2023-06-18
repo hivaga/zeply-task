@@ -1,14 +1,3 @@
-/*
- * Replace this with your own classes
- *
- * e.g.
- * .container {
- * }
-*/
-.header{
-  color:  white;
-}
-
 
 .container{
   display: flex;
@@ -17,6 +6,9 @@
   width: 100%;
 }
 
+.header{
+  color:  white;
+}
 
 .spacer50px{
   width: 50px;

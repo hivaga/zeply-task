@@ -3,6 +3,7 @@ import React, {useContext, useEffect, useState} from "react";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {catchError, of, Subject, takeUntil} from "rxjs";
 import AddressBalanceDetails from "../../../../shared/components/address-balance-details/address-balance-details";
+import ErrorMessage from "../../../../shared/components/error-message/error-message";
 import ModalPreloader from "../../../../shared/components/modal-preloader/modal-preloader";
 import {addStyles} from "../../../../utils/styles-utils";
 import {AppStoreContext} from "../../../main/components/main-page/main-page";
@@ -29,27 +30,29 @@ export function SearchPage(props: SearchHashProps) {
   const appStore = useContext(AppStoreContext);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [hasErrorMessage, setHasErrorMessage] = useState(true);
+  const [hasErrorMessage, setHasErrorMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [loadedAddressDetails, setLoadedAddressDetails] = useState<IAddressDetails | undefined>(undefined)
-  useEffect(() => {
 
-    console.log('Component SearchForm is update!');
+  useEffect(() => {
+    console.log('Component SearchPage is updated!');
     // Clean subscriptions on component destruction
     return () => {
       onDestroyComponent.next();
     }
   }, []);
 
-
   const onSubmitHandler: SubmitHandler<ISearchForm> = async (data: ISearchForm) => {
     console.log('Submit clicked', data, errors);
     setIsLoading(true);
     if (data.type === 'address') {
-      appStore.addressBalance(data).pipe(catchError((errors: any) => {
+      appStore.addressBalanceRequest(data).pipe(catchError((error: Error) => {
         console.error('Error fetching btc address details!', data, errors);
-        setErrorMessage(errors?.message ?? 'Error while loading address');
+        setErrorMessage(error?.message ?? 'Error while loading address');
         setHasErrorMessage(true);
+        setTimeout(() => {
+          setHasErrorMessage(false)
+        }, 5000);
         return of(undefined);
       }), takeUntil(onDestroyComponent)).subscribe(response => {
         if (response) {
@@ -109,11 +112,7 @@ export function SearchPage(props: SearchHashProps) {
           </div>}
       </div>
       {isLoading && <ModalPreloader/>}
-      <Snackbar anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
-                open={hasErrorMessage}
-                onClose={onCloseErrorMessageHandler}>
-        <Alert severity="error">{errorMessage}</Alert>
-      </Snackbar>
+      {hasErrorMessage && <ErrorMessage open={hasErrorMessage} message={errorMessage}/>}
     </div>
   );
 }

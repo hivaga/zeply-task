@@ -7,15 +7,15 @@ interface SearchBtcDto {
   type: 'address' | 'transaction'
 }
 
-@Controller('search-btc')
-export class SearchBtcController {
+@Controller('btc-search')
+export class BtcSearchController {
 
   constructor(public service: BlockchainApiService) {
   }
   @Post()
   create(@Body() searchBtcDto: SearchBtcDto) {
     const {hash, type} = searchBtcDto;
-    console.log('search-btc', searchBtcDto);
+    console.log('BtcSearchController', searchBtcDto);
     return this.service.getAddressBalance(hash);
   }
 

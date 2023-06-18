@@ -1,7 +1,6 @@
-import {response} from "express";
-import {BehaviorSubject, from, map, switchMap, tap} from "rxjs";
-import {environment} from "../../environments/environment";
-import React from "react";
+import {BehaviorSubject, from, switchMap, tap, throwError} from "rxjs";
+import {getResponseError} from "../../utils/http-utils";
+import {CurrencyCodes} from "../consts/consts";
 
 
 export interface ISearchForm {
@@ -17,6 +16,13 @@ export interface IAddressDetails {
   n_unredeemed: number
   total_received: number
   total_sent: number
+}
+
+export interface ICurrencyRate {
+  '15m': number
+  buy: number
+  last: number
+  sell: number
 }
 
 export interface Transaction {
@@ -37,62 +43,85 @@ export interface Transaction {
   ver: number
   vin_sz: number
   vout_sz: number
-  weight: number
+  weight: number,
+  txs: Transaction[]
 }
 
 export type IAddress = string;
-
-export type FullAddressDetails = IAddressDetails & { txs: Transaction[] }
-
-const BASE_API_URL = environment.api.baseUrl;
+export type FullAddressDetails = IAddressDetails;
 
 export class AppStore {
 
-  readonly search = new BehaviorSubject<ISearchForm>({
-    hash: '',
-    type: 'address'
-  });
+  readonly $searches = new BehaviorSubject<ISearchForm[]>([])
+  readonly $addressDetailsMap = new BehaviorSubject(new Map<IAddress, IAddressDetails>());
+  readonly $currentCurrency = new BehaviorSubject<CurrencyCodes>(CurrencyCodes.BTC);
+  readonly $currencyRates = new BehaviorSubject<{ [P in keyof typeof CurrencyCodes]?: ICurrencyRate }>({})
 
-  readonly addressDetailsMap = new BehaviorSubject(new Map<IAddress, IAddressDetails>());
-  readonly transactionsByAddressMap = new BehaviorSubject(new Map<IAddress, Transaction[]>);
+  constructor(private readonly baseUrl: string) {
+  }
 
-  addressBalance(data: ISearchForm) {
-    this.search.next(data);
+  addressBalanceRequest(data: ISearchForm) {
+    const searches = this.$searches.value;
+    searches.push(data);
+    this.$searches.next([...searches]);
 
-    return from(fetch('http://localhost:3000/api/search-btc', {
+    return from(fetch(`${this.baseUrl}/btc-search`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
     })).pipe(
-/*      map((response) => {
-        if (response.ok) {
-          return response;
+      switchMap((response) => {
+        if (!response.ok) {
+          return throwError(() => getResponseError(response, `Error while address balance!`));
         }
-        throw new Error('Error while requesting addressBalance');
-      }),*/
-      switchMap((response) => from<Promise<FullAddressDetails>>(response.json())),
+        return from<Promise<FullAddressDetails>>(response.json())
+      }),
       tap(response => {
-
         const cloneResponse = {...response};
-
-        const transactions = this.transactionsByAddressMap.value;
-        transactions.set(cloneResponse.address, cloneResponse.txs);
-        this.transactionsByAddressMap.next(transactions);
-
-        delete (cloneResponse as Partial<FullAddressDetails>).txs;
-
-        const addressDetails = this.addressDetailsMap.value;
+        const addressDetails = this.$addressDetailsMap.value;
         addressDetails.set(cloneResponse.address, cloneResponse);
-        this.addressDetailsMap.next(addressDetails);
-      })
-    );
+        this.$addressDetailsMap.next(addressDetails);
+      }));
 
   }
 
-  sendTransactionSearchRequest(data: ISearchForm) {
-    this.search.next(data);
+  transactionSearchRequest() {
+
   }
+
+  currencyMultipliersRequest() {
+
+  }
+
+  updateCurrencyRatesRequest(currency: CurrencyCodes) {
+
+    const currentCurrency = this.$currentCurrency.value
+    this.$currentCurrency.next(currency);
+
+    return from(fetch(`${this.baseUrl}/btc-conversion-rates`, {
+      method: 'GET'
+    })).pipe(
+      switchMap((response) => {
+        if (!response.ok) {
+          return throwError(() => getResponseError(response, `Error while fetching currency rates!`));
+        }
+        return from<Promise<any>>(response.json())
+      }),
+      tap(response => {
+        const cloneResponse = {
+          ...response, [CurrencyCodes.BTC]: {
+            sell: 1,
+            last: 1,
+            buy: 1
+          }
+        };
+        this.$currencyRates.next(cloneResponse);
+      }));
+
+
+  }
+
 
 }

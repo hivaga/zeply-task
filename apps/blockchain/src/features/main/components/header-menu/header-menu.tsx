@@ -1,4 +1,5 @@
 import {
+  Alert,
   AppBar,
   Badge,
   Box,
@@ -7,30 +8,53 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent,
+  SelectChangeEvent, Snackbar,
   Toolbar
 } from "@mui/material";
-import React, {useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
+import {catchError, of, Subject, takeUntil} from "rxjs";
+import ErrorMessage from "../../../../shared/components/error-message/error-message";
+import {CurrencyCodes} from "../../../../shared/consts/consts";
+import {AppStoreContext} from "../main-page/main-page";
 import styles from './header-menu.module.scss';
 
 export interface HeaderMenuProps {
-}
-
-enum CurrencyCodes {
-  BTC = 'BTC',
-  USD = 'USD',
-  EUR = 'EUR'
 }
 
 
 export function HeaderMenu(props: HeaderMenuProps) {
 
   const [selectedCurrency, setSelectedCurrency] = useState<CurrencyCodes>(CurrencyCodes.BTC);
+  const appStore = useContext(AppStoreContext);
+  const onDestroyComponent = new Subject<void>();
+  const [hasErrorMessage, setHasErrorMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  useEffect(() => {
+    console.log('Component Header menu is update!');
+    // Clean subscriptions on component destruction
+    return () => {
+      onDestroyComponent.next();
+    }
+  }, []);
 
   const onCurrencyChangeHandler = (event: SelectChangeEvent) => {
-    if (event.target) {
+    if (event.target && event.target?.value) {
       console.log('Selected currency:', event.target.value);
-      setSelectedCurrency(event.target?.value as CurrencyCodes);
+      setSelectedCurrency(event.target.value as CurrencyCodes);
+      appStore.updateCurrencyRatesRequest(event.target.value as CurrencyCodes).pipe(catchError((error: Error) => {
+        console.error('Error fetching currency rates!', error);
+        setErrorMessage(error?.message ?? 'Error while loading address');
+        setHasErrorMessage(true);
+        setTimeout(() => {
+          setHasErrorMessage(false)
+        }, 5000);
+        return of(undefined);
+      }), takeUntil(onDestroyComponent)).subscribe((response) => {
+        if (response) {
+          console.log('New currency rates received!', response);
+        }
+      });
     }
   }
 
@@ -50,25 +74,24 @@ export function HeaderMenu(props: HeaderMenuProps) {
             </Button>
           </div>
           <div className={styles.flexGrow1}></div>
-          <Box sx={{minWidth: 120}}>
-            <FormControl fullWidth variant="standard" sx={{m: 1, minWidth: 120}}>
-              <InputLabel>Currency</InputLabel>
-              <Select
-                sx={{color: '#fff'}}
-                className={styles.selectCurrency}
-                id="select-currency"
-                value={selectedCurrency}
-                label="Currency"
-                onChange={onCurrencyChangeHandler}>
-                <MenuItem value={CurrencyCodes.BTC}>BTC</MenuItem>
-                <MenuItem value={CurrencyCodes.USD}>USD</MenuItem>
-                <MenuItem value={CurrencyCodes.EUR}>EUR</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
+          <FormControl fullWidth variant="standard" sx={{m: 1, maxWidth: 150}}>
+            <InputLabel>Currency</InputLabel>
+            <Select
+              sx={{color: '#fff'}}
+              className={styles.selectCurrency}
+              id="select-currency"
+              value={selectedCurrency}
+              label="Currency"
+              onChange={onCurrencyChangeHandler}>
+              <MenuItem value={CurrencyCodes.BTC}>BTC</MenuItem>
+              <MenuItem value={CurrencyCodes.USD}>USD</MenuItem>
+              <MenuItem value={CurrencyCodes.EUR}>EUR</MenuItem>
+            </Select>
+          </FormControl>
         </Box>
-
       </Toolbar>
+      {hasErrorMessage && <ErrorMessage open={hasErrorMessage} message={errorMessage}/>}
+
     </AppBar>
   );
 }

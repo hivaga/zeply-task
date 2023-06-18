@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react';
 
-import {SearchPage} from './search-page';
+import ErrorMessage from './error-message';
 
-describe('SearchPage', () => {
+describe('ErrorMessage', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<SearchPage />);
+    const { baseElement } = render(<ErrorMessage />);
     expect(baseElement).toBeTruthy();
   });
 });

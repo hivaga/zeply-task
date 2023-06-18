@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { SearchBtcController } from './search-btc.controller';
+import { BtcSearchController } from './btc-search.controller';
 
-describe('SearchBtcController', () => {
-  let controller: SearchBtcController;
+describe('BtcSearchController', () => {
+  let controller: BtcSearchController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [SearchBtcController],
+      controllers: [BtcSearchController],
     }).compile();
 
-    controller = module.get<SearchBtcController>(SearchBtcController);
+    controller = module.get<BtcSearchController>(BtcSearchController);
   });
 
   it('should be defined', () => {

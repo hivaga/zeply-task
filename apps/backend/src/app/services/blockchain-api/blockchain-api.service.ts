@@ -20,6 +20,18 @@ export class BlockchainApiService {
       }));
   }
 
+  getConversionRates() {
+
+    const url = `https://blockchain.info/ticker`;
+
+    return this.httpService.get(url).pipe(
+      map(response => response.data),
+      catchError((err) => {
+        console.error('Error in getConvertionRates', err)
+        return throwError(() => err);
+      }));
+  }
+
   getTransactions(address: string) {
     const url = `https://blockchain.info/q/addressbalance/${address}?confirmations=confirmations`
     return this.httpService.get(url).pipe(map(response => response.data));
