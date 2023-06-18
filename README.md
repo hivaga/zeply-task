@@ -40,20 +40,20 @@ Requirement coverage - Is the application doing what it is meant to be doing?
 Bonus points will be awarded for the implementation of a functionality that retrieves the top 5
 searched addresses and transactions.Fields to display for each kind of hash
 Address search
-Number of confirmed transaction
-Total BTC receive
-Total BTC spent
-Total BTC unspent
-Current address balance
+* Number of confirmed transaction
+* Total BTC receive
+* Total BTC spent
+* Total BTC unspent
+* Current address balance
 
 
 #### Transaction search
-Transaction has
-Received tim
-Statu
-Size (in bytes)
-#### Number of confirmations (the successful act of hashing a transaction and adding it to
-the blockchain
-Total BTC inpu
-Total BTCoutpu
-Total fees (paid to process this transaction)
+* Transaction hash
+* Received time
+* Status
+* Size (in bytes)
+
+#### Number of confirmations (the successful act of hashing a transaction and adding it to the blockchain)
+* Total BTC input
+* Total BTC output
+* Total fees (paid to process this transaction)

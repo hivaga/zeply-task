@@ -10,6 +10,7 @@ import {
   SelectChangeEvent,
   Toolbar
 } from "@mui/material";
+import {HttpStatus} from "@nestjs/common";
 import React, {useContext, useEffect, useState} from "react";
 import {catchError, of, Subject, takeUntil} from "rxjs";
 import ErrorMessage from "../../../../shared/components/error-message/error-message";
@@ -41,7 +42,10 @@ export function HeaderMenu(props: HeaderMenuProps) {
     if (event.target && event.target?.value) {
       console.log('Selected currency:', event.target.value);
       setSelectedCurrency(event.target.value as CurrencyCodes);
-      appStore.updateCurrencyRatesRequest(event.target.value as CurrencyCodes).pipe(catchError((error: Error) => {
+      appStore.updateCurrencyRatesRequest(event.target.value as CurrencyCodes).pipe(catchError((error: {
+        message?: string,
+        status: HttpStatus
+      }) => {
         console.error('Error fetching currency rates!', error);
         setErrorMessage(error?.message ?? 'Error while loading address');
         setHasErrorMessage(true);

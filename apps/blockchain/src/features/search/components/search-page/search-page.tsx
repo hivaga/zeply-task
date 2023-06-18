@@ -5,18 +5,18 @@ import {catchError, of, Subject, takeUntil} from "rxjs";
 import AddressBalanceDetails from "../../../../shared/components/address-balance-details/address-balance-details";
 import ErrorMessage from "../../../../shared/components/error-message/error-message";
 import ModalPreloader from "../../../../shared/components/modal-preloader/modal-preloader";
+import {IAddressDetails, ISearchForm} from "../../../../shared/store/app.store";
 import {addStyles} from "../../../../utils/styles-utils";
 import {AppStoreContext} from "../../../main/components/main-page/main-page";
-import {IAddressDetails, ISearchForm} from "../../store/search.store";
 import styles from './search-page.module.scss';
 
 export interface SearchHashProps {
 }
 
 const BTC_ADDRESS_REGEX = /^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$/;
+const TRANSACTION_HASH_REGEX = /\b([A-Fa-f0-9]{64})\b/;
 
 export function SearchPage(props: SearchHashProps) {
-
 
   const {
     register,
@@ -29,9 +29,11 @@ export function SearchPage(props: SearchHashProps) {
 
   const appStore = useContext(AppStoreContext);
 
+  const [currentFormData, setCurrentFormData] = useState<ISearchForm>({hash: '', type:'address'});
+  const [currentRegex, setCurrentRegex] = useState(BTC_ADDRESS_REGEX);
   const [isLoading, setIsLoading] = useState(false);
-  const [hasErrorMessage, setHasErrorMessage] = useState(true);
-  const [errorMessage, setErrorMessage] = useState('hello');
+  const [hasErrorMessage, setHasErrorMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [loadedAddressDetails, setLoadedAddressDetails] = useState<IAddressDetails | undefined>(undefined)
 
   useEffect(() => {
@@ -43,8 +45,9 @@ export function SearchPage(props: SearchHashProps) {
   }, []);
 
   const onSubmitHandler: SubmitHandler<ISearchForm> = async (data: ISearchForm) => {
-    console.log('Submit clicked', data, errors);
+    console.log('On Form Submit:', data, errors);
     setIsLoading(true);
+
     if (data.type === 'address') {
       appStore.addressBalanceRequest(data).pipe(catchError((error: Error) => {
         console.error('Error fetching btc address details!', data, errors);
@@ -59,6 +62,36 @@ export function SearchPage(props: SearchHashProps) {
         setIsLoading(false);
       })
     }
+
+    if (data.type === 'transaction') {
+      appStore.transactionSearchRequest(data).pipe(catchError((error: Error) => {
+        console.error('Error fetching transaction address details!', data, errors);
+        setErrorMessage(error?.message ?? 'Error while loading transaction details');
+        setHasErrorMessage(true);
+        return of(undefined);
+      }), takeUntil(onDestroyComponent)).subscribe(response => {
+        if (response) {
+          console.log('Transaction details received', response);
+          // setLoadedAddressDetails(response);
+        }
+        setIsLoading(false);
+      })
+    }
+  }
+
+  const onHashChangeHandler = (data:any) =>{
+    const formData:ISearchForm = watch();
+    setCurrentFormData(formData);
+
+    if(formData.type === 'address' && currentRegex !== BTC_ADDRESS_REGEX){
+      setCurrentRegex(BTC_ADDRESS_REGEX)
+    }
+
+    if(formData.type === 'transaction' && currentRegex !== TRANSACTION_HASH_REGEX){
+      setCurrentRegex(TRANSACTION_HASH_REGEX)
+    }
+
+    console.log('Form changed data:', watch());
   }
 
   return (
@@ -72,11 +105,11 @@ export function SearchPage(props: SearchHashProps) {
                                id={'hashInput'}
                                className={`${styles.inputField}`}  {...register("hash", {
                   required: true,
-                  pattern: BTC_ADDRESS_REGEX
+                  pattern: currentRegex
                 })}/>
                 <Button variant='outlined' type='submit' id={'submitButton'}>Search</Button>
               </div>
-              <RadioGroup defaultValue={'address'} row={true} className={styles.hcontainer}>
+              <RadioGroup defaultValue={'address'} row={true} className={styles.hcontainer} onChange={onHashChangeHandler}>
                 <FormControlLabel value="address" control={<Radio/>}
                                   id={'addressButton'}
                                   label="Address"  {...register("type", {required: true})}  />
@@ -89,9 +122,13 @@ export function SearchPage(props: SearchHashProps) {
         </form>
 
         <div className={addStyles(styles.vcontainer, styles.errorMessage, styles.paddingTop1)}>
-          {errors.hash && <div>
-            {errors.hash.type === 'required' && <span>Address or transaction hash are required</span>}
+          {(errors.hash && currentFormData.type === 'address') && <div>
+            {errors.hash.type === 'required' && <span>BTC Address is required</span>}
             {errors.hash.type === 'pattern' && <span>Invalid BTC address</span>}
+          </div>}
+          {(errors.hash && currentFormData.type === 'transaction') && <div>
+            {errors.hash.type === 'required' && <span>Transaction hash is required</span>}
+            {errors.hash.type === 'pattern' && <span>Invalid Transaction hash</span>}
           </div>}
           <div>{errors.type && <span>This field is required</span>}</div>
         </div>

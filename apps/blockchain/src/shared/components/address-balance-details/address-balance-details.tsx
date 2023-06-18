@@ -3,9 +3,8 @@ import {combineLatest, Subject} from "rxjs";
 import {AppStoreContext} from "../../../features/main/components/main-page/main-page";
 import {formatCurrency} from "../../../utils/http-utils";
 import {CurrencyCodes} from "../../consts/consts";
-import {ICurrencyRate} from "../../store/app.store";
+import {IAddressDetails, ICurrencyRate} from "../../store/app.store";
 import styles from "./address-balance-details.module.scss";
-import {IAddressDetails} from "../../../features/search/store/search.store";
 import {Grid, TextField} from "@mui/material";
 
 export function AddressBalanceDetails(props: {
@@ -45,6 +44,9 @@ export function AddressBalanceDetails(props: {
             id="outlined-required"
             label="Address"
             defaultValue={props.details.address}
+            InputProps={{
+              readOnly: true,
+            }}
           />
         </Grid>
         <Grid item xs={4}>
@@ -52,7 +54,6 @@ export function AddressBalanceDetails(props: {
             className={styles.fullwidth}
             id="outlined-required"
             label={`Current Balance`}
-            defaultValue={props.details.final_balance}
             value={formatCurrency(props.details.final_balance * currencyRate, currencyCode)}
             prefix={currencyCode}
             InputProps={{
@@ -65,8 +66,10 @@ export function AddressBalanceDetails(props: {
             className={styles.fullwidth}
             id="outlined-required"
             label={`Total Received`}
-            defaultValue={props.details.total_received}
             value={formatCurrency(props.details.total_received * currencyRate, currencyCode)}
+            InputProps={{
+              readOnly: true,
+            }}
           />
         </Grid>
         <Grid item xs={4}>
@@ -74,8 +77,10 @@ export function AddressBalanceDetails(props: {
             className={styles.fullwidth}
             id="outlined-required"
             label={`Total Sent`}
-            defaultValue={props.details.total_sent}
             value={formatCurrency(props.details.total_sent * currencyRate, currencyCode)}
+            InputProps={{
+              readOnly: true,
+            }}
           />
         </Grid>
       </Grid>
