@@ -1,4 +1,4 @@
-import {Alert, Button, FormControl, FormControlLabel, OutlinedInput, Radio, RadioGroup, Snackbar} from "@mui/material";
+import {Button, FormControl, FormControlLabel, OutlinedInput, Radio, RadioGroup} from "@mui/material";
 import React, {useContext, useEffect, useState} from "react";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {catchError, of, Subject, takeUntil} from "rxjs";
@@ -30,8 +30,8 @@ export function SearchPage(props: SearchHashProps) {
   const appStore = useContext(AppStoreContext);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [hasErrorMessage, setHasErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [hasErrorMessage, setHasErrorMessage] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('hello');
   const [loadedAddressDetails, setLoadedAddressDetails] = useState<IAddressDetails | undefined>(undefined)
 
   useEffect(() => {
@@ -50,9 +50,6 @@ export function SearchPage(props: SearchHashProps) {
         console.error('Error fetching btc address details!', data, errors);
         setErrorMessage(error?.message ?? 'Error while loading address');
         setHasErrorMessage(true);
-        setTimeout(() => {
-          setHasErrorMessage(false)
-        }, 5000);
         return of(undefined);
       }), takeUntil(onDestroyComponent)).subscribe(response => {
         if (response) {
@@ -62,10 +59,6 @@ export function SearchPage(props: SearchHashProps) {
         setIsLoading(false);
       })
     }
-  }
-
-  const onCloseErrorMessageHandler = () => {
-    setHasErrorMessage(false);
   }
 
   return (
@@ -112,7 +105,7 @@ export function SearchPage(props: SearchHashProps) {
           </div>}
       </div>
       {isLoading && <ModalPreloader/>}
-      {hasErrorMessage && <ErrorMessage open={hasErrorMessage} message={errorMessage}/>}
+      {hasErrorMessage && <ErrorMessage open={hasErrorMessage} message={errorMessage} setOpen={setHasErrorMessage}/>}
     </div>
   );
 }

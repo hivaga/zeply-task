@@ -1,5 +1,4 @@
 import {
-  Alert,
   AppBar,
   Badge,
   Box,
@@ -8,7 +7,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent, Snackbar,
+  SelectChangeEvent,
   Toolbar
 } from "@mui/material";
 import React, {useContext, useEffect, useState} from "react";
@@ -46,9 +45,6 @@ export function HeaderMenu(props: HeaderMenuProps) {
         console.error('Error fetching currency rates!', error);
         setErrorMessage(error?.message ?? 'Error while loading address');
         setHasErrorMessage(true);
-        setTimeout(() => {
-          setHasErrorMessage(false)
-        }, 5000);
         return of(undefined);
       }), takeUntil(onDestroyComponent)).subscribe((response) => {
         if (response) {
@@ -90,7 +86,7 @@ export function HeaderMenu(props: HeaderMenuProps) {
           </FormControl>
         </Box>
       </Toolbar>
-      {hasErrorMessage && <ErrorMessage open={hasErrorMessage} message={errorMessage}/>}
+      {hasErrorMessage && <ErrorMessage open={hasErrorMessage} message={errorMessage} setOpen={setHasErrorMessage}/>}
 
     </AppBar>
   );

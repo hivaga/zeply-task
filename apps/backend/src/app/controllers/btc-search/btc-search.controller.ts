@@ -1,5 +1,8 @@
 import {Body, Controller, Post} from '@nestjs/common';
-import {BlockchainApiService} from "../../services/blockchain-api/blockchain-api.service";
+import {AxiosError} from "axios";
+import {catchError, map} from "rxjs";
+import {AxiosService} from "../../services/axios/axios.service";
+import {BaseController} from "../base.controller";
 
 
 interface SearchBtcDto {
@@ -8,15 +11,24 @@ interface SearchBtcDto {
 }
 
 @Controller('btc-search')
-export class BtcSearchController {
+export class BtcSearchController extends BaseController {
 
-  constructor(public service: BlockchainApiService) {
+  constructor(service: AxiosService) {
+    super(service);
   }
+
   @Post()
   create(@Body() searchBtcDto: SearchBtcDto) {
     const {hash, type} = searchBtcDto;
-    console.log('BtcSearchController', searchBtcDto);
-    return this.service.getAddressBalance(hash);
-  }
+    const url = `https://blockchain.info/rawaddr/${hash}?`;
 
+    console.log('BtcSearchController', searchBtcDto);
+
+    return this.service.get(url).pipe(
+      map(response => response.data),
+      catchError((error:AxiosError) => {
+        console.error('BtcSearchController', error);
+        throw this.createHttpException(error);
+      }));
+  }
 }

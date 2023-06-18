@@ -1,15 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BtcConvertionRatesController } from './btc-convertion-rates.controller';
+import {BtcConversionRatesController} from "./btc-convertion-rates.controller";
 
-describe('SearchBtcController', () => {
-  let controller: BtcConvertionRatesController;
+
+describe('BtcConversionRatesController', () => {
+  let controller: BtcConversionRatesController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [BtcConvertionRatesController],
+      controllers: [BtcConversionRatesController],
     }).compile();
 
-    controller = module.get<BtcConvertionRatesController>(BtcConvertionRatesController);
+    controller = module.get<BtcConversionRatesController>(BtcConversionRatesController);
   });
 
   it('should be defined', () => {

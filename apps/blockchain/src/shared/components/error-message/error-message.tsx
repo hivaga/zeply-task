@@ -1,17 +1,19 @@
 import {Alert, Snackbar} from "@mui/material";
 import React from "react";
-import styles from './error-message.module.scss';
 
 export interface ErrorMessageProps {
   open: boolean
-  onCloseHandler?: (...rest: any[]) => any
+  setOpen: React.Dispatch<boolean>
   message: string
+  timeout?: number
 }
 
 export function ErrorMessage(props: ErrorMessageProps) {
+  setTimeout(() => {
+    props.setOpen(false);
+  }, props.timeout ?? 5000);
   return (
     <Snackbar anchorOrigin={{vertical: 'top', horizontal: 'center'}}
-              autoHideDuration={5000}
               open={props.open}>
       <Alert severity="error">{props.message}</Alert>
     </Snackbar>
