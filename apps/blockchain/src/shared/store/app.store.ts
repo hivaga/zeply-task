@@ -61,9 +61,6 @@ export class AppStore {
   }
 
   addressBalanceRequest(data: ISearchForm) {
-    const searches = this.$searches.value;
-    searches.push(data);
-    this.$searches.next([...searches]);
 
     return from(fetch(`${this.baseUrl}/btc-search`, {
       method: 'POST',
@@ -83,12 +80,42 @@ export class AppStore {
         const addressDetails = this.$addressDetailsMap.value;
         addressDetails.set(cloneResponse.address, cloneResponse);
         this.$addressDetailsMap.next(addressDetails);
+
+        const searches = this.$searches.value;
+        searches.push(data);
+        this.$searches.next([...searches]);
+        console.log('Update searches list:', searches);
       }));
 
   }
 
-  transactionSearchRequest() {
+  transactionSearchRequest(data: ISearchForm) {
+    return from(fetch(`${this.baseUrl}/btc-search-transaction`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })).pipe(
+      switchMap((response) => {
+        if (!response.ok) {
+          return throwError(() => getResponseError(response, `Error while address balance!`));
+        }
+        return from<Promise<FullAddressDetails>>(response.json())
+      }),
+      tap(response => {
+       /* const cloneResponse = {...response};
+        const addressDetails = this.$addressDetailsMap.value;
+        addressDetails.set(cloneResponse.address, cloneResponse);
+        this.$addressDetailsMap.next(addressDetails);*/
 
+        console.log('Transaction received', response);
+
+        const searches = this.$searches.value;
+        searches.push(data);
+        this.$searches.next([...searches]);
+        console.log('Update searches list:', searches);
+      }));
   }
 
   currencyMultipliersRequest() {
@@ -97,7 +124,6 @@ export class AppStore {
 
   updateCurrencyRatesRequest(currency: CurrencyCodes) {
 
-    const currentCurrency = this.$currentCurrency.value
     this.$currentCurrency.next(currency);
 
     return from(fetch(`${this.baseUrl}/btc-conversion-rates`, {
