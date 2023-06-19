@@ -30,6 +30,14 @@ export function HeaderMenu(props: HeaderMenuProps) {
   const onDestroyComponent = new Subject<void>();
   const [hasErrorMessage, setHasErrorMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [badgesCount, setBadgesCount] = useState<string>('0');
+
+  appStore.$subscriptions.pipe(takeUntil(onDestroyComponent)).subscribe(subscriptions => {
+    const count = subscriptions.size.toString(10);
+    if (badgesCount !== count) {
+      setBadgesCount(count)
+    }
+  })
 
   useEffect(() => {
     console.log('Component Header menu is update!');
@@ -73,7 +81,7 @@ export function HeaderMenu(props: HeaderMenuProps) {
               <Button key={'Subscriptions'} sx={{color: '#fff'}}>
                 <div className={styles.containerh}>
                   <span>Subscriptions</span>
-                  <Badge anchorOrigin={{vertical: 'top', horizontal: 'right'}} badgeContent={'0'} color="warning"
+                  <Badge anchorOrigin={{vertical: 'top', horizontal: 'right'}} badgeContent={badgesCount} color="info"
                          className={styles.badge}></Badge>
                 </div>
               </Button>
