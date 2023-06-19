@@ -9,17 +9,11 @@ document.documentElement.style.setProperty('--secondary-color', theme.palette.se
 document.documentElement.style.setProperty('--error-color', theme.palette.error.main);
 
 
-
-
-
-
 export function MainPage() {
   return (
-      <div className={styles.container}>
-        <div className={styles.items}>
-          <SearchPage/>
-        </div>
-      </div>
+    <div className={styles.items}>
+      <SearchPage/>
+    </div>
   );
 }
 

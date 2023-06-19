@@ -14,7 +14,7 @@ import {HttpStatus} from "@nestjs/common";
 import React, {useContext, useEffect, useState} from "react";
 import {Link} from 'react-router-dom';
 import {catchError, of, Subject, takeUntil} from "rxjs";
-import {AppStoreContext} from "../../../../main";
+import {AppStoreContext} from "../../../../app";
 import ErrorMessage from "../../../../shared/components/error-message/error-message";
 import {CurrencyCodes} from "../../../../shared/model/currency.types";
 import styles from './header-menu.module.scss';

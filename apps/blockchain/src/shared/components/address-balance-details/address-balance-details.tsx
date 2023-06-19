@@ -1,6 +1,6 @@
 import {useContext, useEffect, useState} from "react";
 import {combineLatest, Subject} from "rxjs";
-import {AppStoreContext} from "../../../main";
+import {AppStoreContext} from "../../../app";
 import {formatCurrency} from "../../../utils/http-utils";
 import {IAddressDetails} from "../../model/btc-address.types";
 import {CurrencyCodes, ICurrencyRate} from "../../model/currency.types";

@@ -2,7 +2,7 @@ import {Button, FormControl, FormControlLabel, OutlinedInput, Radio, RadioGroup}
 import React, {useContext, useEffect, useState} from "react";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {catchError, of, Subject, takeUntil} from "rxjs";
-import {AppStoreContext} from "../../../../main";
+import {AppStoreContext} from "../../../../app";
 import AddressBalanceDetails from "../../../../shared/components/address-balance-details/address-balance-details";
 import ErrorMessage from "../../../../shared/components/error-message/error-message";
 import ModalPreloader from "../../../../shared/components/modal-preloader/modal-preloader";
@@ -86,7 +86,7 @@ export function SearchPage(props: SearchHashProps) {
     }
   }
 
-  const onHashChangeHandler = (data:any) =>{
+  const onHashChangeHandler = () =>{
     const formData:ISearchForm = watch();
     setCurrentFormData(formData);
 
