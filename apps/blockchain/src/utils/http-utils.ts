@@ -1,4 +1,5 @@
-import {CurrencyCodes} from "../shared/consts/consts";
+import {CurrencyCodes} from "../shared/model/currency.types";
+
 
 export function getResponseError(response: Response, message?:string) {
   return new Error(`${message ?? response.statusText}. Status: ${response.status}`);

@@ -1,0 +1,11 @@
+
+.container{
+  display: flex;
+  gap: 20px;
+  flex-direction: column;
+}
+
+.fullwidth{
+  width: 100%;
+  min-width: 100%;
+}

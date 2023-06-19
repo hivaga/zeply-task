@@ -1,54 +1,10 @@
 import {BehaviorSubject, from, switchMap, tap, throwError} from "rxjs";
 import {getResponseError} from "../../utils/http-utils";
-import {CurrencyCodes} from "../consts/consts";
+import {IAddress, IAddressDetails} from "../model/btc-address.types";
+import {CurrencyCodes, ICurrencyRate} from "../model/currency.types";
+import {ISearchForm} from "../model/search.types";
+import {ITransaction, ITransactionHash} from "../model/transaction.types";
 
-
-export interface ISearchForm {
-  hash: string,
-  type: 'address' | 'transaction'
-}
-
-export interface IAddressDetails {
-  address: string
-  final_balance: number
-  hash160: string
-  n_tx: number
-  n_unredeemed: number
-  total_received: number
-  total_sent: number
-}
-
-export interface ICurrencyRate {
-  '15m': number
-  buy: number
-  last: number
-  sell: number
-}
-
-export interface Transaction {
-  balance: number
-  block_height: number
-  block_index: number
-  double_spend: boolean
-  fee: number
-  hash: string
-  inputs: any[]
-  lock_time: number
-  out: any[]
-  relayed_by: string
-  result: number
-  size: number
-  time: number
-  tx_index: number
-  ver: number
-  vin_sz: number
-  vout_sz: number
-  weight: number,
-  txs: Transaction[]
-}
-
-export type IAddress = string;
-export type FullAddressDetails = IAddressDetails;
 
 export class AppStore {
 
@@ -56,6 +12,7 @@ export class AppStore {
   readonly $addressDetailsMap = new BehaviorSubject(new Map<IAddress, IAddressDetails>());
   readonly $currentCurrency = new BehaviorSubject<CurrencyCodes>(CurrencyCodes.BTC);
   readonly $currencyRates = new BehaviorSubject<{ [P in keyof typeof CurrencyCodes]?: ICurrencyRate }>({})
+  readonly $transactionDetailsMap = new BehaviorSubject(new Map<ITransactionHash, ITransaction>);
 
   constructor(private readonly baseUrl: string) {
   }
@@ -73,7 +30,7 @@ export class AppStore {
         if (!response.ok) {
           return throwError(() => getResponseError(response, `Error while address balance!`));
         }
-        return from<Promise<FullAddressDetails>>(response.json())
+        return from<Promise<IAddressDetails>>(response.json())
       }),
       tap(response => {
         const cloneResponse = {...response};
@@ -101,13 +58,13 @@ export class AppStore {
         if (!response.ok) {
           return throwError(() => getResponseError(response, `Error while address balance!`));
         }
-        return from<Promise<FullAddressDetails>>(response.json())
+        return from<Promise<ITransaction>>(response.json())
       }),
       tap(response => {
-       /* const cloneResponse = {...response};
-        const addressDetails = this.$addressDetailsMap.value;
-        addressDetails.set(cloneResponse.address, cloneResponse);
-        this.$addressDetailsMap.next(addressDetails);*/
+        const cloneResponse = {...response};
+        const transactionDetails = this.$transactionDetailsMap.value;
+        transactionDetails.set(cloneResponse.hash, cloneResponse);
+        this.$transactionDetailsMap.next(transactionDetails);
 
         console.log('Transaction received', response);
 
@@ -116,10 +73,6 @@ export class AppStore {
         this.$searches.next([...searches]);
         console.log('Update searches list:', searches);
       }));
-  }
-
-  currencyMultipliersRequest() {
-
   }
 
   updateCurrencyRatesRequest(currency: CurrencyCodes) {

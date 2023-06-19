@@ -2,13 +2,13 @@ import {useContext, useEffect, useState} from "react";
 import {combineLatest, Subject} from "rxjs";
 import {AppStoreContext} from "../../../features/main/components/main-page/main-page";
 import {formatCurrency} from "../../../utils/http-utils";
-import {CurrencyCodes} from "../../consts/consts";
-import {IAddressDetails, ICurrencyRate} from "../../store/app.store";
+import {IAddressDetails} from "../../model/btc-address.types";
+import {CurrencyCodes, ICurrencyRate} from "../../model/currency.types";
 import styles from "./address-balance-details.module.scss";
 import {Grid, TextField} from "@mui/material";
 
 export function AddressBalanceDetails(props: {
-  details: IAddressDetails
+  data: IAddressDetails
 }) {
   const appStore = useContext(AppStoreContext);
   const onDestroyComponent = new Subject<void>();
@@ -41,9 +41,9 @@ export function AddressBalanceDetails(props: {
         <Grid item xs={8} className={styles.noLeftPadding}>
           <TextField
             className={styles.fullwidth}
-            id="outlined-required"
+            id="address-textfield"
             label="Address"
-            defaultValue={props.details.address}
+            defaultValue={props.data.address}
             InputProps={{
               readOnly: true,
             }}
@@ -52,9 +52,9 @@ export function AddressBalanceDetails(props: {
         <Grid item xs={4}>
           <TextField
             className={styles.fullwidth}
-            id="outlined-required"
+            id="current-balance-textfield"
             label={`Current Balance`}
-            value={formatCurrency(props.details.final_balance * currencyRate, currencyCode)}
+            value={formatCurrency(props.data.final_balance * currencyRate, currencyCode)}
             prefix={currencyCode}
             InputProps={{
               readOnly: true,
@@ -64,9 +64,9 @@ export function AddressBalanceDetails(props: {
         <Grid item xs={4}>
           <TextField
             className={styles.fullwidth}
-            id="outlined-required"
+            id="total-recieved-textfield"
             label={`Total Received`}
-            value={formatCurrency(props.details.total_received * currencyRate, currencyCode)}
+            value={formatCurrency(props.data.total_received * currencyRate, currencyCode)}
             InputProps={{
               readOnly: true,
             }}
@@ -75,9 +75,9 @@ export function AddressBalanceDetails(props: {
         <Grid item xs={4}>
           <TextField
             className={styles.fullwidth}
-            id="outlined-required"
+            id="total-spent-textfield"
             label={`Total Sent`}
-            value={formatCurrency(props.details.total_sent * currencyRate, currencyCode)}
+            value={formatCurrency(props.data.total_sent * currencyRate, currencyCode)}
             InputProps={{
               readOnly: true,
             }}

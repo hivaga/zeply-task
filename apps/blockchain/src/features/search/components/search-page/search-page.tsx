@@ -5,7 +5,10 @@ import {catchError, of, Subject, takeUntil} from "rxjs";
 import AddressBalanceDetails from "../../../../shared/components/address-balance-details/address-balance-details";
 import ErrorMessage from "../../../../shared/components/error-message/error-message";
 import ModalPreloader from "../../../../shared/components/modal-preloader/modal-preloader";
-import {IAddressDetails, ISearchForm} from "../../../../shared/store/app.store";
+import TransactionDetails from "../../../../shared/components/transaction-details/transaction-details";
+import {IAddressDetails} from "../../../../shared/model/btc-address.types";
+import {ISearchForm} from "../../../../shared/model/search.types";
+import {ITransaction} from "../../../../shared/model/transaction.types";
 import {addStyles} from "../../../../utils/styles-utils";
 import {AppStoreContext} from "../../../main/components/main-page/main-page";
 import styles from './search-page.module.scss';
@@ -34,7 +37,8 @@ export function SearchPage(props: SearchHashProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [hasErrorMessage, setHasErrorMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [loadedAddressDetails, setLoadedAddressDetails] = useState<IAddressDetails | undefined>(undefined)
+  const [loadedAddressDetails, setLoadedAddressDetails] = useState<IAddressDetails | undefined>(undefined);
+  const [loadedTransactionDetails, setLoadedTransactionDetails] = useState<ITransaction | undefined>(undefined);
 
   useEffect(() => {
     console.log('Component SearchPage is updated!');
@@ -47,6 +51,9 @@ export function SearchPage(props: SearchHashProps) {
   const onSubmitHandler: SubmitHandler<ISearchForm> = async (data: ISearchForm) => {
     console.log('On Form Submit:', data, errors);
     setIsLoading(true);
+
+    if(loadedTransactionDetails) setLoadedTransactionDetails(undefined);
+    if(loadedAddressDetails) setLoadedAddressDetails(undefined);
 
     if (data.type === 'address') {
       appStore.addressBalanceRequest(data).pipe(catchError((error: Error) => {
@@ -72,7 +79,7 @@ export function SearchPage(props: SearchHashProps) {
       }), takeUntil(onDestroyComponent)).subscribe(response => {
         if (response) {
           console.log('Transaction details received', response);
-          // setLoadedAddressDetails(response);
+          setLoadedTransactionDetails(response);
         }
         setIsLoading(false);
       })
@@ -134,9 +141,17 @@ export function SearchPage(props: SearchHashProps) {
         </div>
         {loadedAddressDetails &&
           <div className={styles.vcontainer}>
-            <AddressBalanceDetails details={loadedAddressDetails}/>
+            <AddressBalanceDetails data={loadedAddressDetails}/>
             <div className={styles.hcontainer}>
-              <Button variant='outlined' id={'notifyMeButton'}>Notify Me</Button>
+              <Button variant='outlined' id={'notifyMeButton'}>Subscribe</Button>
+              <Button variant='outlined' id={'notifyMeButton'}>Refresh</Button>
+              <Button variant='outlined' id={'moreDetailsButton'}>More Details</Button>
+            </div>
+          </div>}
+        {loadedTransactionDetails &&
+          <div className={styles.vcontainer}>
+            <TransactionDetails data={loadedTransactionDetails}/>
+            <div className={styles.hcontainer}>
               <Button variant='outlined' id={'moreDetailsButton'}>More Details</Button>
             </div>
           </div>}

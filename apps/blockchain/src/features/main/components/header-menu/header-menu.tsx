@@ -14,7 +14,7 @@ import {HttpStatus} from "@nestjs/common";
 import React, {useContext, useEffect, useState} from "react";
 import {catchError, of, Subject, takeUntil} from "rxjs";
 import ErrorMessage from "../../../../shared/components/error-message/error-message";
-import {CurrencyCodes} from "../../../../shared/consts/consts";
+import {CurrencyCodes} from "../../../../shared/model/currency.types";
 import {AppStoreContext} from "../main-page/main-page";
 import styles from './header-menu.module.scss';
 
@@ -67,9 +67,9 @@ export function HeaderMenu(props: HeaderMenuProps) {
           <div>
             <Button key={'Home'} sx={{color: '#fff'}}>Home</Button>
             <Button key={'Subscriptions'} sx={{color: '#fff'}}>
-              <div>
+              <div className={styles.containerh}>
                 <span>Subscriptions</span>
-                <Badge anchorOrigin={{vertical: 'top', horizontal: 'right'}} badgeContent={'0'} color="warning"></Badge>
+                <Badge anchorOrigin={{vertical: 'top', horizontal: 'right'}} badgeContent={'0'} color="warning" className={styles.badge}></Badge>
               </div>
             </Button>
           </div>

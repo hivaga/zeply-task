@@ -5,7 +5,7 @@ import AddressBalanceDetails from './address-balance-details';
 const addressDetails:any = {};
 describe('AddressBalanceDetails', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<AddressBalanceDetails details={addressDetails} />);
+    const { baseElement } = render(<AddressBalanceDetails data={addressDetails} />);
     expect(baseElement).toBeTruthy();
   });
 });

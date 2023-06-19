@@ -1,20 +1,29 @@
 
-.container{
+.container {
   display: flex;
   align-items: center;
   flex-direction: row;
   width: 100%;
 }
 
-.header{
-  color:  white;
+.containerh {
+  display: flex;
+  gap: 10px;
 }
 
-.spacer50px{
+.badge{
+
+}
+
+.header {
+  color: white;
+}
+
+.spacer50px {
   width: 50px;
 }
 
-.badgeContainer{
+.badgeContainer {
   position: relative;
   display: block;
 }
@@ -25,6 +34,6 @@
   top: 0;
 }
 
-.flexGrow1{
+.flexGrow1 {
   flex-grow: 1;
 }
