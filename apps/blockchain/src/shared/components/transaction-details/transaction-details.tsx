@@ -1,7 +1,8 @@
 import {Grid, TextField} from "@mui/material";
 import {useContext, useEffect, useState} from "react";
 import {combineLatest, Subject} from "rxjs";
-import {AppStoreContext} from "../../../features/main/components/main-page/main-page";
+import {AppStoreContext} from "../../../main";
+
 import {formatCurrency} from "../../../utils/http-utils";
 import {CurrencyCodes, ICurrencyRate} from "../../model/currency.types";
 import {ITransaction} from "../../model/transaction.types";

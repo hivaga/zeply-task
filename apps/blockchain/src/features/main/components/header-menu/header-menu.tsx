@@ -12,10 +12,11 @@ import {
 } from "@mui/material";
 import {HttpStatus} from "@nestjs/common";
 import React, {useContext, useEffect, useState} from "react";
+import {Link} from 'react-router-dom';
 import {catchError, of, Subject, takeUntil} from "rxjs";
+import {AppStoreContext} from "../../../../main";
 import ErrorMessage from "../../../../shared/components/error-message/error-message";
 import {CurrencyCodes} from "../../../../shared/model/currency.types";
-import {AppStoreContext} from "../main-page/main-page";
 import styles from './header-menu.module.scss';
 
 export interface HeaderMenuProps {
@@ -65,13 +66,21 @@ export function HeaderMenu(props: HeaderMenuProps) {
           <h1 className={styles.header}>Blockchain Application</h1>
           <div className={styles.spacer50px}></div>
           <div>
-            <Button key={'Home'} sx={{color: '#fff'}}>Home</Button>
-            <Button key={'Subscriptions'} sx={{color: '#fff'}}>
-              <div className={styles.containerh}>
-                <span>Subscriptions</span>
-                <Badge anchorOrigin={{vertical: 'top', horizontal: 'right'}} badgeContent={'0'} color="warning" className={styles.badge}></Badge>
-              </div>
-            </Button>
+            <Link to="/">
+              <Button key={'Home'} sx={{color: '#fff'}}>Home</Button>
+            </Link>
+            <Link to="/subscriptions">
+              <Button key={'Subscriptions'} sx={{color: '#fff'}}>
+                <div className={styles.containerh}>
+                  <span>Subscriptions</span>
+                  <Badge anchorOrigin={{vertical: 'top', horizontal: 'right'}} badgeContent={'0'} color="warning"
+                         className={styles.badge}></Badge>
+                </div>
+              </Button>
+            </Link>
+            <Link to="/statistics">
+              <Button key={'Statistics'} sx={{color: '#fff'}}>Statistics</Button>
+            </Link>
           </div>
           <div className={styles.flexGrow1}></div>
           <FormControl fullWidth variant="standard" sx={{m: 1, maxWidth: 150}}>

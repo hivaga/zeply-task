@@ -2,6 +2,7 @@ import {Button, FormControl, FormControlLabel, OutlinedInput, Radio, RadioGroup}
 import React, {useContext, useEffect, useState} from "react";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {catchError, of, Subject, takeUntil} from "rxjs";
+import {AppStoreContext} from "../../../../main";
 import AddressBalanceDetails from "../../../../shared/components/address-balance-details/address-balance-details";
 import ErrorMessage from "../../../../shared/components/error-message/error-message";
 import ModalPreloader from "../../../../shared/components/modal-preloader/modal-preloader";
@@ -10,7 +11,6 @@ import {IAddressDetails} from "../../../../shared/model/btc-address.types";
 import {ISearchForm} from "../../../../shared/model/search.types";
 import {ITransaction} from "../../../../shared/model/transaction.types";
 import {addStyles} from "../../../../utils/styles-utils";
-import {AppStoreContext} from "../../../main/components/main-page/main-page";
 import styles from './search-page.module.scss';
 
 export interface SearchHashProps {
