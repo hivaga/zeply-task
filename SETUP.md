@@ -31,3 +31,7 @@ Multiple dependencies installed manually
 
 #### Adding NestJS Axios
 `npm install --save @nestjs/axios`
+
+
+#### Adding React Router
+`npm install react-router-dom`
