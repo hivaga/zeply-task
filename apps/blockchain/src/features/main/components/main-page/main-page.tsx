@@ -12,7 +12,7 @@ document.documentElement.style.setProperty('--error-color', theme.palette.error.
 export function MainPage() {
   return (
     <div className={styles.items}>
-      <SearchPage/>
+      <SearchPage />
     </div>
   );
 }

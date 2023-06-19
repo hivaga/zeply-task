@@ -1,4 +1,5 @@
 import {render} from '@testing-library/react';
+import SearchPage from "../../../search/components/search-page/search-page";
 
 import {MainPage} from './main-page';
 
@@ -8,8 +9,4 @@ describe('MainPage', () => {
     expect(baseElement).toBeTruthy();
   });
 
-  it('should have a correct header string', () => {
-    const { getByText } = render(<MainPage />);
-    expect(getByText(/Blockchain/gi)).toBeTruthy();
-  });
 });

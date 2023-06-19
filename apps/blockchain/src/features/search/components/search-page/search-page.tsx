@@ -1,5 +1,5 @@
 import {Button, FormControl, FormControlLabel, OutlinedInput, Radio, RadioGroup} from "@mui/material";
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {catchError, of, Subject, takeUntil} from "rxjs";
 import {AppStoreContext} from "../../../../app";
@@ -31,6 +31,7 @@ export function SearchPage(props: SearchHashProps) {
   const onDestroyComponent = new Subject<void>();
 
   const appStore = useContext(AppStoreContext);
+  const searchInputRef = useRef<HTMLInputElement>();
 
   const [currentFormData, setCurrentFormData] = useState<ISearchForm>({hash: '', type:'address'});
   const [currentRegex, setCurrentRegex] = useState(BTC_ADDRESS_REGEX);
@@ -98,8 +99,13 @@ export function SearchPage(props: SearchHashProps) {
       setCurrentRegex(TRANSACTION_HASH_REGEX)
     }
 
+    if (searchInputRef.current){
+      searchInputRef.current.value = '';
+    }
+
     console.log('Form changed data:', watch());
   }
+
 
   return (
     <div>
@@ -109,6 +115,7 @@ export function SearchPage(props: SearchHashProps) {
             <div className={styles.vcontainer}>
               <div className={styles.hcontainer}>
                 <OutlinedInput placeholder={"Enter address or transaction"}
+                               inputRef={searchInputRef}
                                id={'hashInput'}
                                className={`${styles.inputField}`}  {...register("hash", {
                   required: true,
