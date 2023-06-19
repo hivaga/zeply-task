@@ -22,16 +22,19 @@ Multiple dependencies installed manually
     "kill-port": "kill-port"`
 
 #### Adding React Forms Hook
-
 `npm install react-hook-form`
 
-#### Adding NestJS Swagger 
-
+#### Adding NestJS Swagger
 `npm install --save @nestjs/swagger swagger-ui-express`
 
 #### Adding NestJS Axios
 `npm install --save @nestjs/axios`
 
-
 #### Adding React Router
 `npm install react-router-dom`
+
+#### Adding Crypto JS
+`npm install crypto-js @types/crypto-js`
+
+#### Adding WS
+`npm install ws @types/ws`

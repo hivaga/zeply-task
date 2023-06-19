@@ -22,7 +22,7 @@ export function SubscriptionsPage(props: SubscriptionsPageProps) {
 
   return (
     <div className={styles['container']}>
-      <h1>Welcome to SubscriptionsPage!</h1>
+      <h1>Welcome to Subscriptions Page!</h1>
     </div>
   );
 }

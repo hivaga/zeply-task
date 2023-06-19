@@ -2,6 +2,19 @@
 
 - [Repository](https://github.com/hivaga/zeply-task)
 
+## How to start
+
+### Commands
+* Start frontend in dev mode locally
+  * ``npm run start-frontend``
+* Start backend in dev mode locally
+  * ``npm run start-backend``
+* Run unit tests for frontend and backend
+  * ``npm run test-all``
+* Run e2e test for frontend
+  * ``npm run start-e2e-fronend``
+
+
 ## Task Requirements 
 
 ### Introduction

@@ -9,3 +9,9 @@ export interface IAddressDetails {
   total_received: number
   total_sent: number
 }
+
+
+export interface IAddressSubscription {
+  address: IAddress
+  balance: number
+}

@@ -13,6 +13,7 @@ export class AppStore {
   readonly $currentCurrency = new BehaviorSubject<CurrencyCodes>(CurrencyCodes.BTC);
   readonly $currencyRates = new BehaviorSubject<{ [P in keyof typeof CurrencyCodes]?: ICurrencyRate }>({})
   readonly $transactionDetailsMap = new BehaviorSubject(new Map<ITransactionHash, ITransaction>);
+  readonly $subscriptions = new BehaviorSubject(new Set<IAddress>([]));
 
   constructor(private readonly baseUrl: string) {
   }
@@ -102,5 +103,26 @@ export class AppStore {
 
   }
 
+  subscribeToAddressRequest(addresses: Set<IAddress>) {
+    const addressesArray = Array.from(addresses.values());
+    return from(fetch(`${this.baseUrl}/btc-address-subscribe`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({addresses: addressesArray}),
+    })).pipe(
+      switchMap((response) => {
+        if (!response.ok) {
+          return throwError(() => getResponseError(response, `Error while subscribing addresses for change!`));
+        }
+        return from<Promise<{ newList: IAddress[], unsubscribeList: IAddress[] }>>(response.json())
+      }),
+      tap(response => {
+        this.$subscriptions.next(new Set(addresses.values()));
+        console.log('Update subscriptions list:', response);
+      }));
+
+  }
 
 }

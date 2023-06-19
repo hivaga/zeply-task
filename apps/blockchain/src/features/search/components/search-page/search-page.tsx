@@ -33,13 +33,14 @@ export function SearchPage(props: SearchHashProps) {
   const appStore = useContext(AppStoreContext);
   const searchInputRef = useRef<HTMLInputElement>();
 
-  const [currentFormData, setCurrentFormData] = useState<ISearchForm>({hash: '', type:'address'});
+  const [currentFormData, setCurrentFormData] = useState<ISearchForm>({hash: '', type: 'address'});
   const [currentRegex, setCurrentRegex] = useState(BTC_ADDRESS_REGEX);
   const [isLoading, setIsLoading] = useState(false);
   const [hasErrorMessage, setHasErrorMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [loadedAddressDetails, setLoadedAddressDetails] = useState<IAddressDetails | undefined>(undefined);
   const [loadedTransactionDetails, setLoadedTransactionDetails] = useState<ITransaction | undefined>(undefined);
+  const [hasSubscription, setHasSubscription] = useState(false);
 
   useEffect(() => {
     console.log('Component SearchPage is updated!');
@@ -49,12 +50,18 @@ export function SearchPage(props: SearchHashProps) {
     }
   }, []);
 
+  useEffect(() => {
+    if(loadedAddressDetails) {
+      setHasSubscription(appStore.$subscriptions.value.has(loadedAddressDetails.address))
+    }
+  }, [loadedAddressDetails])
+
   const onSubmitHandler: SubmitHandler<ISearchForm> = async (data: ISearchForm) => {
     console.log('On Form Submit:', data, errors);
     setIsLoading(true);
 
-    if(loadedTransactionDetails) setLoadedTransactionDetails(undefined);
-    if(loadedAddressDetails) setLoadedAddressDetails(undefined);
+    if (loadedTransactionDetails) setLoadedTransactionDetails(undefined);
+    if (loadedAddressDetails) setLoadedAddressDetails(undefined);
 
     if (data.type === 'address') {
       appStore.addressBalanceRequest(data).pipe(catchError((error: Error) => {
@@ -87,23 +94,54 @@ export function SearchPage(props: SearchHashProps) {
     }
   }
 
-  const onHashChangeHandler = () =>{
-    const formData:ISearchForm = watch();
+  const onHashChangeHandler = () => {
+    const formData: ISearchForm = watch();
     setCurrentFormData(formData);
 
-    if(formData.type === 'address' && currentRegex !== BTC_ADDRESS_REGEX){
+    if (formData.type === 'address' && currentRegex !== BTC_ADDRESS_REGEX) {
       setCurrentRegex(BTC_ADDRESS_REGEX)
     }
 
-    if(formData.type === 'transaction' && currentRegex !== TRANSACTION_HASH_REGEX){
+    if (formData.type === 'transaction' && currentRegex !== TRANSACTION_HASH_REGEX) {
       setCurrentRegex(TRANSACTION_HASH_REGEX)
     }
 
-    if (searchInputRef.current){
+    if (searchInputRef.current) {
       searchInputRef.current.value = '';
     }
 
     console.log('Form changed data:', watch());
+  }
+
+  const onSubscribeHandler = () => {
+    const subscriptions = appStore.$subscriptions.value;
+    const address = loadedAddressDetails?.address;
+    if (address) {
+      setIsLoading(true);
+      const tempHasSubscription = subscriptions.has(address);
+
+      if (!tempHasSubscription) {
+
+        if (!hasSubscription) {
+          setHasSubscription(true);
+        }
+
+        const newSet = new Set(appStore.$subscriptions.value);
+        newSet.add(address);
+        appStore.subscribeToAddressRequest(newSet).pipe(catchError((error: Error) => {
+          console.error('Error subscribing address!', address, errors);
+          setErrorMessage(error?.message ?? 'Error while loading address');
+          setHasErrorMessage(true);
+          return of(undefined);
+        }), takeUntil(onDestroyComponent)).subscribe(response => {
+          if (response) {
+            console.log('Address details received', response);
+          }
+          setIsLoading(false);
+        });
+      }
+
+    }
   }
 
 
@@ -123,7 +161,8 @@ export function SearchPage(props: SearchHashProps) {
                 })}/>
                 <Button variant='outlined' type='submit' id={'submitButton'}>Search</Button>
               </div>
-              <RadioGroup defaultValue={'address'} row={true} className={styles.hcontainer} onChange={onHashChangeHandler}>
+              <RadioGroup defaultValue={'address'} row={true} className={styles.hcontainer}
+                          onChange={onHashChangeHandler}>
                 <FormControlLabel value="address" control={<Radio/>}
                                   id={'addressButton'}
                                   label="Address"  {...register("type", {required: true})}  />
@@ -150,7 +189,8 @@ export function SearchPage(props: SearchHashProps) {
           <div className={styles.vcontainer}>
             <AddressBalanceDetails data={loadedAddressDetails}/>
             <div className={styles.hcontainer}>
-              <Button variant='outlined' id={'notifyMeButton'}>Subscribe</Button>
+              <Button variant='outlined' id={'notifyMeButton'} onClick={onSubscribeHandler}
+                      disabled={hasSubscription}>Subscribe</Button>
               <Button variant='outlined' id={'notifyMeButton'}>Refresh</Button>
               <Button variant='outlined' id={'moreDetailsButton'}>More Details</Button>
             </div>

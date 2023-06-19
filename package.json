@@ -4,7 +4,11 @@
   "license": "MIT",
   "scripts": {
     "nx": "nx",
-    "kill-port": "kill-port"
+    "kill-port": "kill-port",
+    "start-frontend": "kill-port 4200 && nx serve blockchain",
+    "start-backend": "nx serve backend",
+    "test-all": "nx test blockchain --silent && nx test backend --silent",
+    "start-e2e-fronend": "kill-port 4300 && nx e2e blockchain-e2e"
   },
   "private": true,
   "dependencies": {
@@ -18,7 +22,9 @@
     "@nestjs/swagger": "^6.3.0",
     "@nx/nest": "^16.3.2",
     "@swc/helpers": "~0.5.0",
+    "@types/crypto-js": "^4.1.1",
     "axios": "^1.0.0",
+    "crypto-js": "^4.1.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.44.3",
@@ -26,7 +32,8 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0",
     "swagger-ui-express": "^4.6.3",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "ws": "^8.13.0"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.14.5",
@@ -54,6 +61,7 @@
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
     "@types/supertest": "^2.0.11",
+    "@types/ws": "^8.5.5",
     "@typescript-eslint/eslint-plugin": "^5.58.0",
     "@typescript-eslint/parser": "^5.58.0",
     "babel-jest": "^29.4.1",
