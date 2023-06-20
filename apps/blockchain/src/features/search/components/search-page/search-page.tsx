@@ -174,7 +174,7 @@ export function SearchPage(props: SearchHashProps) {
           </FormControl>
         </form>
 
-        <div className={addStyles(styles.vcontainer, styles.errorMessage, styles.paddingTop1)}>
+        <div className={addStyles(styles.vcontainer, styles.errorMessage, styles.paddingTop1)} id={'error-messages'}>
           {(errors.hash && currentFormData.type === 'address') && <div>
             {errors.hash.type === 'required' && <span>BTC Address is required</span>}
             {errors.hash.type === 'pattern' && <span>Invalid BTC address</span>}
@@ -186,7 +186,7 @@ export function SearchPage(props: SearchHashProps) {
           <div>{errors.type && <span>This field is required</span>}</div>
         </div>
         {loadedAddressDetails &&
-          <div className={styles.vcontainer}>
+          <div className={styles.vcontainer} id={'address-details-container'}>
             <AddressBalanceDetails data={loadedAddressDetails}/>
             <div className={styles.hcontainer}>
               <Button variant='outlined' id={'notifyMeButton'} onClick={onSubscribeHandler}

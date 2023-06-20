@@ -43,7 +43,7 @@ export function AddressBalanceDetails(props: {
             className={styles.fullwidth}
             id="address-textfield"
             label="Address"
-            defaultValue={props.data.address}
+            value={props.data.address}
             InputProps={{
               readOnly: true,
             }}

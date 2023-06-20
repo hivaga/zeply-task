@@ -75,10 +75,10 @@ export function HeaderMenu(props: HeaderMenuProps) {
           <div className={styles.spacer50px}></div>
           <div>
             <Link to="/">
-              <Button key={'Home'} sx={{color: '#fff'}}>Home</Button>
+              <Button key={'Home'} sx={{color: '#fff'}} id={'home-button'}>Home</Button>
             </Link>
             <Link to="/subscriptions">
-              <Button key={'Subscriptions'} sx={{color: '#fff'}}>
+              <Button key={'Subscriptions'} sx={{color: '#fff'}} id={'subscriptions-button'}>
                 <div className={styles.containerh}>
                   <span>Subscriptions</span>
                   <Badge anchorOrigin={{vertical: 'top', horizontal: 'right'}} badgeContent={badgesCount} color="info"
@@ -87,7 +87,7 @@ export function HeaderMenu(props: HeaderMenuProps) {
               </Button>
             </Link>
             <Link to="/statistics">
-              <Button key={'Statistics'} sx={{color: '#fff'}}>Statistics</Button>
+              <Button key={'Statistics'} sx={{color: '#fff'}} id={'statistics-button'}>Statistics</Button>
             </Link>
           </div>
           <div className={styles.flexGrow1}></div>
