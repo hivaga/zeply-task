@@ -8,7 +8,7 @@
     "start-frontend": "kill-port 4200 && nx serve blockchain",
     "start-backend": "nx serve backend",
     "test-all": "nx test blockchain --silent && nx test backend --silent",
-    "start-e2e-fronend": "kill-port 4300 && nx e2e blockchain-e2e"
+    "start-e2e-fronend": "kill-port 4300 && nx e2e blockchain-e2e --silent"
   },
   "private": true,
   "dependencies": {

@@ -1,7 +1,7 @@
 import {IAddress} from "../../../blockchain/src/shared/model/btc-address.types";
 import { getGreeting } from '../support/app.po';
 
-describe('blockchain', () => {
+describe('Blockchain UX Application', () => {
   beforeEach(() => cy.visit('/'));
 
   it('should display welcome message', () => {
@@ -41,8 +41,7 @@ describe('blockchain', () => {
 
   });
 
-
-  it.only('should show loaded address', () => {
+  it('should show loaded address', () => {
 
     const data = {
       address: '1CPaziTqeEixPoSFtJxu74uDGbpEAotZom',
@@ -70,4 +69,5 @@ describe('blockchain', () => {
     cy.get('#total-spent-textfield').should('exist').should('contain.value', data.total_sent.toString(10));
 
   });
+
 });

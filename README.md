@@ -11,9 +11,10 @@
   * ``npm run start-backend``
 * Run unit tests for frontend and backend
   * ``npm run test-all``
-* Run e2e test for frontend
+* Run e2e test for frontend (headless)
   * ``npm run start-e2e-fronend``
-
+* Run e2e test for frontend (watch mode)
+  * ``nx e2e blockchain-e2e --watch``
 
 ## Task Requirements 
 
