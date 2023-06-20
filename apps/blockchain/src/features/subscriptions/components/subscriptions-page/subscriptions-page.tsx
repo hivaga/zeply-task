@@ -1,4 +1,5 @@
-import {useContext, useEffect} from "react";
+import {Grid, TextField} from "@mui/material";
+import {useContext, useEffect, useState} from "react";
 import {Subject} from "rxjs";
 import {AppStoreContext} from "../../../../app";
 import styles from './subscriptions-page.module.scss';
@@ -10,6 +11,7 @@ export function SubscriptionsPage(props: SubscriptionsPageProps) {
 
   const appStore = useContext(AppStoreContext);
   const onDestroyComponent = new Subject<void>();
+  const [subscriptions] = useState(Array.from(appStore.$subscriptions.value.values()));
 
   useEffect(() => {
     console.log('Component SubscriptionsPage is update!');
@@ -22,7 +24,20 @@ export function SubscriptionsPage(props: SubscriptionsPageProps) {
 
   return (
     <div className={styles['container']}>
-      <h1>Welcome to Subscriptions Page!</h1>
+      <h3>Subscriptions</h3>
+      <Grid container wrap={'wrap'} spacing={2} columns={12}>
+        {subscriptions.map((item, index) => (
+          <Grid item xs={12}>
+            <TextField
+              className={styles.fullwidth}
+              label={`Address`}
+              value={item}
+              InputProps={{
+                readOnly: true
+              }}/>
+          </Grid>
+        ))}
+      </Grid>
     </div>
   );
 }
